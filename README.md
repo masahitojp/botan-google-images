@@ -6,6 +6,13 @@
 
 botan handlers that interacts with the Google Images API.
 
+## Usage
+```
+@botan image <query> - Search image from Google
+```
+
+![](https://raw.githubusercontent.com/masahitojp/botan-google-image/master/images/screenshot.png)
+
 ## requirement
 
 Java8
