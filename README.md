@@ -11,7 +11,7 @@ botan handlers that interacts with the Google Images API.
 @botan image <query> - Search image from Google
 ```
 
-![](https://raw.githubusercontent.com/masahitojp/botan-google-image/master/images/screenshot.png)
+![](https://raw.githubusercontent.com/masahitojp/botan-google-images/master/images/screenshot.png)
 
 ## requirement
 
