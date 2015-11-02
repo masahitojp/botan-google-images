@@ -9,12 +9,12 @@ import com.github.masahitojp.botan.utils.pattern.InvocationRegexPattern;
 import com.github.masahitojp.botan.utils.pattern.NotInvocationRegexPattern;
 import mockit.Mock;
 import mockit.MockUp;
-import org.apache.http.HttpEntity;
-import org.apache.http.util.EntityUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.util.Arrays;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -56,12 +56,11 @@ public class GoogleImagesHandlersTest {
     }
 
     @Test
-    public void jobAddAndDel() {
+    public void imageGet() {
 
-        new MockUp<EntityUtils>() {
+        new MockUp<GoogleImagesHandlers>() {
             @Mock
-            @SuppressWarnings("unused")
-            public String toString(HttpEntity entity) {
+            final String getBody(final HttpURLConnection conn) throws IOException {
                 return "{\"responseData\": {\"results\": [{\"unescapedUrl\": \"url\"}]}}";
             }
         };
