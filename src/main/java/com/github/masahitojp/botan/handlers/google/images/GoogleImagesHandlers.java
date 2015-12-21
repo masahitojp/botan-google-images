@@ -21,6 +21,15 @@ import java.nio.channels.ReadableByteChannel;
 @SuppressWarnings("unused")
 public class GoogleImagesHandlers implements BotanMessageHandlers {
     private static String ERROR_PREFIX = "Encountered an error : ";
+    private static String GOOGLE_IMAGE_API_URL = "https://www.googleapis.com/customsearch/v1";
+
+    private String id;
+    private String key;
+
+    public GoogleImagesHandlers() {
+        id = BotanUtils.envToOpt("GOOGLE_CSE_ID").orElse("");
+        key = BotanUtils.envToOpt("GOOGLE_CSE_KEY").orElse("");
+    }
 
     @Getter(lazy = true)
     private final Gson gson = initializeGson();
@@ -37,23 +46,26 @@ public class GoogleImagesHandlers implements BotanMessageHandlers {
                 message -> {
                     final String query = message.getMatcher().group("query");
                     try {
-                        final String a = URLEncoder.encode(query, "UTF-8");
-                        final URL url = new URL(String.format("http://ajax.googleapis.com/ajax/services/search/images?q=%s&rsz=8&safe=active&v=1.0", a));
+                        final String q = URLEncoder.encode(query, "UTF-8");
+                        final String fields = URLEncoder.encode("items(link)", "UTF-8");
+                        final String uid = URLEncoder.encode(id, "UTF-8");
+                        final String s= GOOGLE_IMAGE_API_URL + String.format(
+                                "?q=%s&searchType=image&safe=high&fields=%s&cx=%s&key=%s",
+                                q, fields, uid, key);
 
+                        final URL url = new URL(s);
                         final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                         final int code = conn.getResponseCode();
 
                         if (code == 200) {
                             final String src = getBody(conn);
                             final GoogleImageResponse jsonObject = getGson().fromJson(src, GoogleImageResponse.class);
-                            if (jsonObject != null && jsonObject.responseData != null && jsonObject.responseData.results.size() > 0) {
-                                final String imageUrl = BotanUtils.getRandomValue(jsonObject.responseData.results).unescapedUrl;
+                            if (jsonObject != null && jsonObject.items != null && jsonObject.getItems().size() > 0) {
+                                final String imageUrl = BotanUtils.getRandomValue(jsonObject.getItems()).link;
                                 message.reply(imageUrl);
                             } else {
                                 message.reply(String.format("Sorry, I found no results for '%s'.", query));
                             }
-
-
                         } else {
                             message.reply(ERROR_PREFIX + String.format("http request failed (%d)", code));
                         }
