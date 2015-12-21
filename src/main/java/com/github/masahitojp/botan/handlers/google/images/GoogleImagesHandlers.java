@@ -27,8 +27,13 @@ public class GoogleImagesHandlers implements BotanMessageHandlers {
     private String key;
 
     public GoogleImagesHandlers() {
-        id = BotanUtils.envToOpt("GOOGLE_CSE_ID").orElse("");
-        key = BotanUtils.envToOpt("GOOGLE_CSE_KEY").orElse("");
+        this.id = BotanUtils.envToOpt("GOOGLE_CSE_ID").orElse("");
+        this.key = BotanUtils.envToOpt("GOOGLE_CSE_KEY").orElse("");
+    }
+
+    public GoogleImagesHandlers(final String id, final String key) {
+        this.id = id;
+        this.key = key;
     }
 
     @Getter(lazy = true)
